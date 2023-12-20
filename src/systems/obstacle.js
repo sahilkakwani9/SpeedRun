@@ -38,7 +38,7 @@ const UpdateObstacle = (entities, {time, dispatch}) => {
       !entities['Obstacle' + i].scored
     ) {
       entities['Obstacle' + i].scored = true;
-      dispatch({type: 'score'});
+      dispatch({type: 'score', value: 1});
     }
   }
   return entities;

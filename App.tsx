@@ -1,31 +1,19 @@
-import React, {useState} from 'react';
-import {
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-  useWindowDimensions,
-} from 'react-native';
-import Entities from './src/entities';
-import {GameEngine} from 'react-native-game-engine';
-import systems from './src/systems';
-import GameOver from './src/components/GameOver';
-
+import React from 'react';
+import {Dimensions, StatusBar, StyleSheet, View} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import Navigation from './src/navigation';
+import {PortalProvider} from '@gorhom/portal';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 const App = () => {
-  const [running, setRunning] = useState(true);
-  const [gameEngine, setGameEngine] = useState<GameEngine | null>(null);
-  const [score, setScore] = useState<number>(0);
-  const {height, width} = useWindowDimensions();
-
-  const restart = () => {
-    setScore(0);
-    setRunning(true);
-    gameEngine?.swap(Entities(height, width));
-  };
-
   return (
-    <View style={styles.container}>
-      <GameEngine
+    <View style={{height: Dimensions.get('window').height}}>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <PortalProvider>
+          <StatusBar barStyle={'dark-content'} />
+          <Navigation />
+        </PortalProvider>
+
+        {/* <GameEngine
         ref={ref => {
           setGameEngine(ref);
         }}
@@ -34,10 +22,14 @@ const App = () => {
         systems={systems}
         running={running}
         onEvent={(e: any) => {
-          if (e.type === 'gameOver') {
+          if (e.type === 'Game-Over') {
             setRunning(false);
+            setTimeout(() => {
+              console.log('starting game again');
+              setRunning(true);
+            }, 4000);
           } else if (e.type === 'score') {
-            setScore(score => score + 1);
+            setScore(score => score + e.value);
           }
         }}>
         <StatusBar hidden={true} />
@@ -45,8 +37,11 @@ const App = () => {
       {running ? (
         <Text style={styles.score}>{score}</Text>
       ) : (
-        <GameOver score={score} restart={restart} />
-      )}
+        <>
+          <GameOver score={score} restart={restart} />
+        </>
+      )} */}
+      </GestureHandlerRootView>
     </View>
   );
 };
@@ -55,21 +50,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-  },
-  gameContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  score: {
-    color: '#ffffff',
-    fontSize: 50,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    top: 100,
-    fontFamily: 'crackman-regular',
   },
 });
 
