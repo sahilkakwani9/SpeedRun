@@ -6,5 +6,7 @@ const Constants = {
   TOP_PIPE_WIDTH: widthRatio * 80,
   BOTTOM_PIPE_WIDTH: widthRatio * 80,
 };
+const gameShiftApi = 'https://api.gameshift.dev/';
+
 export default Constants;
-export {width, height};
+export {width, height, gameShiftApi};

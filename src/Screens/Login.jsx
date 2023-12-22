@@ -1,5 +1,5 @@
 // StartScreen.js
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,10 @@ import {
 import Arrow from '../assets/icons/arrow';
 import Sheet from '../components/BottomSheet';
 import {BottomSheetTextInput} from '@gorhom/bottom-sheet';
+import FetchAllUsers from '../utils/Auth/FetchAllUsers';
+import CreateUser from '../utils/Auth/CreateUser';
+import {useConfigStore} from '../store/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {width, height} = Dimensions.get('window');
 
@@ -18,34 +22,59 @@ const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [isValid, setIsValid] = useState(true);
   const LoginRef = useRef();
+  const {users, setAllUsers} = useConfigStore();
   const onStartPress = () => {
-    console.log('im being clicked');
     LoginRef?.current?.snapToIndex(0);
     // navigation.navigate('Game');
   };
   const validateEmail = () => {
-    // Implement your email validation logic here
-    // For example, you can use a regular expression
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setIsValid(emailRegex.test(email));
   };
 
   const handleInputChange = text => {
     setEmail(text);
-    // You can add more real-time validation if needed
-    // For example, checking email format as the user types
     validateEmail();
   };
 
-  const handleBlur = () => {
-    // Validate the email on blur (when the user leaves the input)
-    validateEmail();
+  const fetchUsers = async () => {
+    const isUser = await checkLocalStorage();
+    if (isUser) {
+      navigation.navigate('Root');
+      return;
+    }
+    const allUsers = await FetchAllUsers();
+    setAllUsers(allUsers.data);
+  };
+
+  const checkLocalStorage = async () => {
+    const isUser = await AsyncStorage.getItem('@user_data');
+    return isUser;
+  };
+
+  useEffect(() => {
+    fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onSubmit = async () => {
+    const existingUser = users.find(user => user.email === email);
+    if (existingUser) {
+      const userData = JSON.stringify(existingUser);
+      await AsyncStorage.setItem('@user_data', userData);
+      navigation.navigate('Root');
+      LoginRef.current.close();
+      return;
+    }
+    const userData = await CreateUser(email);
+    await AsyncStorage.setItem('@user_data', userData);
+    LoginRef.current.close();
+    navigation.navigate('Root');
+    return;
   };
 
   return (
     <View style={styles.container}>
-      {/* // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}> */}
-      {/* <Image source={require('./rocket.png')} style={styles.rocketImage} /> */}
       <View style={styles.upperContainer}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Solr</Text>
@@ -74,13 +103,7 @@ const Login = ({navigation}) => {
             keyboardType="email-address"
             autoCapitalize="none"
           />
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={() => {
-              // Implement your logic on submit
-              console.log('Email submitted:', email);
-            }}
-            disabled={!isValid}>
+          <TouchableOpacity style={styles.submitButton} onPress={onSubmit}>
             <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
         </View>
