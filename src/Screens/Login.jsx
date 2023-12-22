@@ -79,6 +79,7 @@ const Login = ({navigation}) => {
             onPress={() => {
               // Implement your logic on submit
               console.log('Email submitted:', email);
+              navigation.navigate('Root');
             }}
             disabled={!isValid}>
             <Text style={styles.submitButtonText}>Submit</Text>
@@ -142,6 +143,7 @@ const styles = StyleSheet.create({
   },
   sheetContainer: {
     padding: 16,
+    marginBottom: 25,
     flex: 1,
     justifyContent: 'space-between',
     // backgroundColor: 'red',
@@ -160,6 +162,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomWidth: 6,
     borderRadius: 10,
+    color: 'white',
   },
   submitButton: {
     backgroundColor: '#2ecc71',
