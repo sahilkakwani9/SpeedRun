@@ -1,0 +1,17 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/PermanentMarker-Regular.ttf",
+      "sha1": "bc40bfbc7eb7715af82b136429848a3c7a83a2b3"
+    },
+    {
+      "path": "src/assets/fonts/Preahvihear-Regular.ttf",
+      "sha1": "1dfbe3b2e49635e3124c02243f810ccc1641cc7f"
+    },
+    {
+      "path": "src/assets/fonts/Righteous-Regular.ttf",
+      "sha1": "3129e2b47e224dec082c4169b396b1fa27a95749"
+    }
+  ]
+}
